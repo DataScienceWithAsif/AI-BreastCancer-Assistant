@@ -7,6 +7,9 @@ os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "0")
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from dotenv import load_dotenv
+from transformers import BitsAndBytesConfig
+
+quant_config = BitsAndBytesConfig(load_in_8bit=True)
 
 load_dotenv()
 
@@ -17,6 +20,7 @@ class ModelLoader:
         self.model_id = "A-Asif/llama3.2-breastcancer-assistant"
         self.local_dir = os.path.join(base_dir, "local_models", "llama3.2-breastcancer-assistant")
         self.cache_dir = os.path.join(base_dir, ".hf_cache")
+        self.has_cuda = torch.cuda.is_available()
 
     def _local_model_ready(self):
         required_files = ["config.json", "tokenizer_config.json"]
@@ -33,34 +37,42 @@ class ModelLoader:
         """
         Tries loading with `dtype=`, falling back to the older `torch_dtype=`
         kwarg if the installed transformers version doesn't support `dtype=`.
+        Loads onto GPU with device_map="auto" if CUDA is available, otherwise
+        loads directly onto CPU (no device_map, to avoid accelerate trying
+        to disk-offload when it misjudges available RAM).
         """
         common_kwargs = dict(
             cache_dir=self.cache_dir,
             local_files_only=local_only,
         )
 
-        tokenizer = AutoTokenizer.from_pretrained(path_to_load, **common_kwargs)
+        tokenizer = AutoTokenizer.from_pretrained(path_to_load, fix_mistral_regex=True, **common_kwargs)
 
-        device_kwargs = dict(
-            device_map="auto",
-            low_cpu_mem_usage=True,
-        )
+        if self.has_cuda:
+            device_kwargs = dict(device_map="auto", low_cpu_mem_usage=True)
+        else:
+            # No GPU: load straight onto CPU, skip device_map entirely
+            device_kwargs = dict(low_cpu_mem_usage=True)
 
         try:
             model = AutoModelForCausalLM.from_pretrained(
                 path_to_load,
-                dtype=torch.bfloat16,
-                **common_kwargs,
-                **device_kwargs,
-            )
+                quantization_config=quant_config,
+                cache_dir=self.cache_dir,
+                local_files_only=local_only,
+                low_cpu_mem_usage=True,
+                )
         except TypeError:
             # Older transformers versions use `torch_dtype` instead of `dtype`
             model = AutoModelForCausalLM.from_pretrained(
                 path_to_load,
-                torch_dtype=torch.bfloat16,
+                torch_dtype=torch.float32,
                 **common_kwargs,
                 **device_kwargs,
             )
+
+        if not self.has_cuda:
+            model = model.to("cpu")
 
         return tokenizer, model
 
@@ -108,4 +120,5 @@ if __name__ == "__main__":
     print(f"🖥️  CUDA available: {torch.cuda.is_available()}")
     loader = ModelLoader()
     tokenizer, model = loader.load_model()
+    print("✅ Model and tokenizer loaded successfully.")
     print(model.config)

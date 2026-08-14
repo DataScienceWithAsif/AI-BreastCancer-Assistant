@@ -6,3 +6,11 @@ trl
 bitsandbytes
 streamlit
 python-dotenv
+torch
+matplotlib
+pandas
+numpy
+scikit-learn
+tensorflow
+keras
+seaborn
