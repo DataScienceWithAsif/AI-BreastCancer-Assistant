@@ -1,42 +1,115 @@
-# AI Breast Health Companion — Setup
+# 🎗️ AI Breast Cancer Assistant
 
-## Files added
-- `src/app.py` — main Streamlit app (run this)
-- `src/assistant.py` — chatbot wrapper class (uses your existing `model_loader.py`)
+A modern Streamlit application that combines:
+- **Breast cancer prediction** from diagnostic feature inputs
+- **AI-powered educational chat** for breast health questions
 
-## Files you already have (must be present)
-- `src/predictive_model.py`
-- `src/model_loader.py`
-- `BC_predictor_model.keras` and `BC_scaler.pkl` at the project root (one level above `src/`)
+> ⚠️ This project is for educational support only and is **not** a medical diagnostic system.
 
-## Install dependencies
+---
+
+## ✨ UI Overview
+
+The app is designed with a clean, modern interface:
+- Dark gradient theme with glass-style cards
+- Two focused workflows in the sidebar:
+  - **🔬 Cancer Prediction**
+  - **💬 AI Assistant**
+- Color-coded prediction result cards (Benign/Malignant)
+- Confidence progress bar and safety disclaimer
+- Styled conversational chat with persistent session history
+
+---
+
+## 🧠 Core Features
+
+### 1) Breast Tissue Prediction
+- Accepts **15 diagnostic measurements** via sliders
+- Uses a trained Keras model (`BC_predictor_model.keras`)
+- Applies preprocessing using saved scaler (`BC_scaler.pkl`)
+- Returns:
+  - Predicted class (`Benign` / `Malignant`)
+  - Confidence score
+  - Raw probabilities
+
+### 2) AI Breast Health Assistant
+- Built with Transformers + PyTorch
+- Uses a supportive system prompt focused on plain-language education
+- Helps explain:
+  - Screening concepts
+  - General treatment topics
+  - Prediction outcomes (via one-click explanation from the prediction page)
+
+---
+
+## 🗂️ Project Structure
+
+```text
+AI-BreastCancer-Assistant/
+├── BC_predictor_model.keras
+├── BC_scaler.pkl
+├── requirements.txt
+├── README.md
+└── src/
+    ├── app.py               # Streamlit UI
+    ├── predictive_model.py  # Prediction model wrapper
+    ├── model_loader.py      # LLM loading utilities
+    └── assistant.py         # AI assistant logic
+```
+
+---
+
+## ⚙️ Requirements
+
+- Python environment with required packages
+- Model artifacts present at repository root:
+  - `BC_predictor_model.keras`
+  - `BC_scaler.pkl`
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-(If you already have `tensorflow`/`torch`/`transformers` installed in your `devsphere_capstone_env`, you can skip re-installing those.)
+---
 
-## Run the app
+## ▶️ Usage
 
 From the project root:
 
 ```bash
-cd src
-streamlit run app.py
+streamlit run src/app.py
 ```
 
-This opens the app in your browser (usually `http://localhost:8501`).
+Then open the local URL shown in terminal (usually `http://localhost:8501`).
 
-## Notes
+---
 
-- The prediction model and the LLM assistant are both loaded lazily via `st.cache_resource`,
-  so they only load once per session, not on every interaction. First load of the assistant
-  may take a little while since it's loading the full LLM weights.
-- Sliders on the Prediction page use the min/max ranges you provided, with the midpoint as
-  the default value.
-- The "Explain this result with AI Assistant" button on the Prediction page feeds the model's
-  prediction into the chatbot for a plain-language explanation — this is the connector between
-  your two capstone components.
-- If the assistant is slow to respond, that's expected for CPU inference on a 3B model; consider
-  reducing `max_new_tokens` in `assistant.py` if you need faster responses for a live demo.
+## 🧪 How to Use the App
+
+### Cancer Prediction Flow
+1. Open **🔬 Cancer Prediction**
+2. Adjust the 15 feature sliders using report values
+3. Click **Run Prediction**
+4. Review class + confidence
+5. Optionally click **Explain this result with AI Assistant**
+
+### AI Assistant Flow
+1. Open **💬 AI Assistant**
+2. Ask a breast health education question
+3. Read the model response in chat format
+4. Use **Clear conversation** to reset context
+
+---
+
+## 🔒 Safety Note
+
+This assistant does **not** diagnose disease or provide personalized medical advice.
+Always consult a licensed healthcare professional for medical decisions.
+
+---
+
+## 📄 License
+
+This project is released under the terms of the repository's [LICENSE](LICENSE).
