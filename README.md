@@ -113,3 +113,13 @@ Always consult a licensed healthcare professional for medical decisions.
 ## 📄 License
 
 This project is released under the terms of the repository's [LICENSE](LICENSE).
+
+## Streamlit Chatbot
+<img width="958" height="440" alt="dev" src="https://github.com/user-attachments/assets/f04581b2-ac20-4170-b513-367816e892fd" />
+
+<img width="933" height="445" alt="dev1" src="https://github.com/user-attachments/assets/9c534f99-2223-47c9-a137-58bd5c4dad63" />
+
+<img width="941" height="391" alt="dev2" src="https://github.com/user-attachments/assets/a1fe7ed0-2665-4509-8510-3f1016a1a44d" />
+
+<img width="902" height="433" alt="dev4" src="https://github.com/user-attachments/assets/de6c061f-c20d-4f70-b3ce-334b40d939ae" />
+
