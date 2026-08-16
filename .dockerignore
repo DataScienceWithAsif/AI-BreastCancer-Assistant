@@ -1,0 +1,10 @@
+local_models/
+.hf_cache/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+.env
+Expriments/
+*.ipynb
+.ipynb_checkpoints/
